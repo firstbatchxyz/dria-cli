@@ -1,0 +1,48 @@
+{
+  "name": "dria-cli",
+  "version": "0.0.1",
+  "description": "A command-line tool for Dria",
+  "author": "FirstBatch Team <dev@firstbatch.xyz>",
+  "contributors": [
+    "Erhan Tezcan <erhan@firstbatch.xyz> (https://github.com/erhant)"
+  ],
+  "license": "Apache-2.0",
+  "files": [
+    "/bin",
+    "LICENSE",
+    "README.md"
+  ],
+  "bin": "/bin/index.js",
+  "scripts": {
+    "lint": "eslint '**/*.{js,ts}' --fix",
+    "prettier": "prettier --write .",
+    "build": "npx tsc",
+    "cli": "yarn build && node ./bin/index.js"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  },
+  "prettier": {
+    "printWidth": 120
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended"
+    ]
+  },
+  "dependencies": {
+    "dockerode": "^4.0.2"
+  },
+  "packageManager": "yarn@4.1.0"
+}
