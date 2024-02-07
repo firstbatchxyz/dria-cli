@@ -13,7 +13,7 @@
     "README.md"
   ],
   "bin": {
-    "ember": "./bin/index.js"
+    "dria": "./bin/index.js"
   },
   "scripts": {
     "lint": "npx eslint './src/**/*.ts' && echo 'All good!'",
@@ -21,8 +21,15 @@
     "build": "npx tsc",
     "cli": "yarn build && node ./bin/index.js"
   },
+  "dependencies": {
+    "dockerode": "^4.0.2",
+    "loglevel": "^1.9.1",
+    "yargs": "^17.7.2"
+  },
+  "packageManager": "yarn@4.1.0",
   "devDependencies": {
     "@types/dockerode": "^3.3.23",
+    "@types/node": "^20.11.16",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",
@@ -46,11 +53,5 @@
     "rules": {
       "@typescript-eslint/no-unused-vars": "warn"
     }
-  },
-  "dependencies": {
-    "dockerode": "^4.0.2",
-    "loglevel": "^1.9.1",
-    "yargs": "^17.7.2"
-  },
-  "packageManager": "yarn@4.1.0"
+  }
 }

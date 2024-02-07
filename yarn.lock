@@ -190,7 +190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^20.11.16":
   version: 20.11.16
   resolution: "@types/node@npm:20.11.16"
   dependencies:
@@ -721,6 +721,7 @@ __metadata:
   resolution: "dria-cli@workspace:."
   dependencies:
     "@types/dockerode": "npm:^3.3.23"
+    "@types/node": "npm:^20.11.16"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
     "@typescript-eslint/parser": "npm:^6.21.0"
     dockerode: "npm:^4.0.2"

@@ -6,18 +6,20 @@ import constants from "../constants";
  */
 export default async function cmdStop() {
   const redisContainerId = await getContainerId(constants.CONTAINERS.REDIS);
+  logger.debug("Stopping Redis.");
   if (redisContainerId) {
-    logger.debug("Stopping Redis.");
     await safeRemoveContainer(redisContainerId);
   } else {
     logger.debug("No Redis container found.");
   }
 
   const hnswContainerId = await getContainerId(constants.CONTAINERS.HNSW);
+  logger.debug("Stopping Dria HNSW.");
   if (hnswContainerId) {
-    logger.debug("Stopping Dria HNSW.");
     await safeRemoveContainer(hnswContainerId);
   } else {
     logger.debug("No Dria HNSW container found.");
   }
+
+  logger.info("Stopped Dria.");
 }

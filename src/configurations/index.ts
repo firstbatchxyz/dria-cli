@@ -1,24 +1,28 @@
-import { resolve } from "path";
+import constants from "../constants";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
 export type DriaCLIConfig = {
-  /** Contract ID. */
-  contract: string;
-  /** Absolute path to wallet. */
-  wallet: string;
-  /** Absolute path to data directory */
-  data: string;
+  /** Defualt Contract ID to fall-back if none is provided. */
+  contract?: string;
+  /** Defualt absolute path to wallet. */
+  wallet?: string;
+  /** Log-level is `info` by default, but becomes `debug` when verbose. */
+  verbose: boolean;
+};
+
+const defaultConfig: DriaCLIConfig = {
+  contract: undefined,
+  wallet: undefined,
+  verbose: false,
 };
 
 export function getConfig(): DriaCLIConfig {
-  // check current directory
-
-  // check home directory
-
-  // TODO: implement
-
-  return {
-    contract: "WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU",
-    wallet: resolve("./wallet.json"),
-    data: resolve("./.dria"),
-  };
+  const path = constants.DRIA_PATH + ".driarc.json";
+  if (existsSync(path)) {
+    const config = JSON.parse(readFileSync(path, "utf-8")) as DriaCLIConfig;
+    return config;
+  } else {
+    writeFileSync(path, JSON.stringify(defaultConfig));
+    return defaultConfig;
+  }
 }

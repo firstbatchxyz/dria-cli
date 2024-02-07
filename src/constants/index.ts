@@ -1,6 +1,8 @@
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
 export default {
+  // DRIA_PATH: "~/.dria/",
+  DRIA_PATH: "./.dria/",
   LOGGER: {
     NAME: "dria-logger",
     LEVEL: "info",

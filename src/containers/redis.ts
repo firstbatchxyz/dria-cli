@@ -5,6 +5,9 @@ import { resolve } from "path";
 export async function redisContainer(contractId: string) {
   const portBinding = `${constants.PORTS.REDIS}/tcp`;
 
+  const hostDataDir = resolve(`${constants.DRIA_PATH}/data`);
+  const containerDataDir = "/app/data";
+
   // check if image exists
   if (!(await imageExists(constants.IMAGES.REDIS))) {
     await docker.pull(constants.IMAGES.REDIS);
@@ -25,7 +28,7 @@ export async function redisContainer(contractId: string) {
     '--appendonly', 'no',
     // '--save', '""', // we actually want to save
     '--dbfilename', `${contractId}.rdb`,
-    '--dir', "/app/data"
+    '--dir', containerDataDir
   ]
 
   return await docker.createContainer({
@@ -34,7 +37,7 @@ export async function redisContainer(contractId: string) {
     name: constants.CONTAINERS.REDIS,
     ExposedPorts: { [portBinding]: {} },
     HostConfig: {
-      Binds: [resolve("./data") + ":/app/data"],
+      Binds: [`${hostDataDir}:${containerDataDir}`],
       PortBindings: { [portBinding]: [{ HostPort: constants.PORTS.REDIS.toString() }] },
     },
     NetworkingConfig: {
