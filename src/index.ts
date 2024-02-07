@@ -1,58 +1,87 @@
 #!/usr/bin/env node
 
-import { resolve } from "path";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 import commands from "./commands/";
 import { checkDocker, checkNetwork, logger } from "./common";
+
 import { getConfig } from "./configurations";
+import { resolve } from "path";
+const config = getConfig();
 
-const command: string = "pull";
-
-async function main() {
-  // pre-requisites
-  const cfg = getConfig();
-  if (cfg.verbose) {
-    logger.setLevel("DEBUG");
-  } else {
-    logger.setLevel("INFO");
-  }
-  await checkDocker();
-  await checkNetwork();
-
-  //  TODO: or override with command-line
-  const wallet = cfg.wallet ?? resolve("./wallet.json");
-  const contract = cfg.contract ?? "WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU";
-
-  switch (command) {
-    case "pull": {
-      await commands.pull(wallet, contract);
-      break;
-    }
-    case "serve": {
-      await commands.serve(contract);
-      break;
-    }
-    case "stop": {
-      await commands.stop();
-      break;
-    }
-    case "config": {
-      await commands.config();
-      break;
-    }
-    case "clear": {
-      await commands.clear(contract);
-      break;
-    }
-    default:
-      console.error("Unknown command:", command);
-      break;
-  }
-}
-
-main().then(
-  () => process.exit(0),
-  (err) => {
-    console.error(err);
-    process.exit(1);
+const contractIdArg = {
+  id: "contract",
+  opts: {
+    describe: "Contract ID",
+    type: "string",
+    default: config.contract,
   },
-);
+} as const;
+
+const walletArg = {
+  id: "wallet",
+  opts: {
+    alias: "w",
+    describe: "Path to a wallet.",
+    string: true,
+    default: config.wallet,
+    // map a given path to absolute so that Docker can use it
+    coerce: (path: string) => resolve(path),
+  },
+} as const;
+
+const verboseArg = {
+  id: "verbose",
+  opts: {
+    alias: "v",
+    describe: "Verbosity.",
+    boolean: true,
+    default: config.verbose,
+  },
+};
+
+yargs(hideBin(process.argv))
+  .scriptName("dria")
+  .option(verboseArg.id, verboseArg.opts)
+  .command(
+    "pull  [contract]",
+    "Pull a Dria knowledge to your local machine.",
+    (yargs) => yargs.option(walletArg.id, walletArg.opts).positional(contractIdArg.id, contractIdArg.opts),
+    async (args) => {
+      console.log(args);
+    },
+  )
+  .command(
+    "serve [contract]",
+    "Serve a Dria knowledge.",
+    (yargs) => yargs.positional(contractIdArg.id, contractIdArg.opts),
+    async (args) => {
+      console.log(args);
+    },
+  )
+  .command(
+    "clear [contract]",
+    "Clear knowledge data locally.",
+    (yargs) => yargs.positional(contractIdArg.id, contractIdArg.opts),
+    async (args) => {
+      console.log(args);
+    },
+  )
+  .command(
+    "config",
+    "Print Dria config.",
+    (yargs) => yargs,
+    async (args) => {
+      console.log(args);
+    },
+  )
+  .command(
+    "stop",
+    "Stop serving Dria.",
+    (yargs) => yargs,
+    async (args) => {
+      console.log(args);
+    },
+  )
+  .demandCommand(1)
+  .parse();
