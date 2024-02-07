@@ -1,0 +1,4 @@
+*
+!.gitignore
+
+# when working locally, redis dumps will be stored here

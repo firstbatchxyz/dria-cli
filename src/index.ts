@@ -1,27 +1,26 @@
 #!/usr/bin/env node
 
 import { cmdPull } from "./commands/pull";
-import { resolve } from "path";
-import { checkNetwork, containerWithName, docker, imageExists } from "./common";
-import constants from "./constants";
+import { checkDocker, checkNetwork } from "./common";
+import { cmdServe } from "./commands/serve";
+import { getConfig } from "./configurations";
 
-const command: string = "pull22";
+const command: string = "pull";
 
 async function main() {
-  // TODO: check if exists, if not; create
-  console.log(
-    await docker.listNetworks({
-      id: [constants.NETWORK.NAME],
-    }),
-  );
-  // await checkNetwork();
+  // pre-requisites
+  const cfg = getConfig();
+  await checkDocker();
+  await checkNetwork();
+
   if (command === "pull") {
-    const contractId = "WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU";
-    const absWalletPath = resolve("./wallet.json");
-    await cmdPull(absWalletPath, contractId);
+    await cmdPull(cfg.wallet, cfg.contract);
+  } else if (command === "serve") {
+    await cmdServe(cfg.contract);
   }
 }
 
+// curl --fail --output /dev/null --silent --data '{"route": "STATE"}' http://localhost:3000
 main().then(
   () => process.exit(0),
   (err) => {

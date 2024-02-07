@@ -1,4 +1,4 @@
-import { containerWithName, docker, imageExists } from "../common";
+import { getContainerId, docker, imageExists, safeRemoveContainer } from "../common";
 import constants from "../constants";
 
 export async function hollowdbContainer(walletPath: string, contractId: string) {
@@ -11,10 +11,10 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
   }
 
   // check if container exists
-  const existingContainerId = await containerWithName(constants.CONTAINERS.HOLLOWDB);
+  // remove it if thats the case
+  const existingContainerId = await getContainerId(constants.CONTAINERS.HOLLOWDB);
   if (existingContainerId) {
-    // TODO: or remove it t provide a different container id
-    return docker.getContainer(existingContainerId);
+    await safeRemoveContainer(existingContainerId);
   }
 
   return await docker.createContainer({
@@ -22,7 +22,7 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
     name: constants.CONTAINERS.HOLLOWDB,
     Env: [
       // "REDIS=redis://default:redispw@redis:6379",
-      `REDIS=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
+      `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
       `CONTRACT_TXID=${contractId}`,
       "USE_BUNDLR=true", // true if your contract uses Bundlr
       "USE_HTX=true", // true if your contract stores values as `hash.txid`

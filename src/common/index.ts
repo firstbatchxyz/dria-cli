@@ -1,7 +1,12 @@
 import Docker from "dockerode";
+import loglevel from "loglevel";
+import constants from "../constants";
 
 /** Main docker host, connected via a socket. */
 export const docker = new Docker({ socketPath: "/var/run/docker.sock" });
+
+/** Dria logger. */
+export const logger = loglevel.getLogger(constants.LOGGER.NAME);
 
 /** Returns the first container ID with the given image if it exists, otherwise `null`. *
  *
@@ -11,7 +16,7 @@ export const docker = new Docker({ socketPath: "/var/run/docker.sock" });
  * await containerWithName("dria-redis"); // 9706...14af
  * await containerWithName("i-dont-exist-at-all"); // null
  */
-export async function containerWithName(containerName: string): Promise<string | null> {
+export async function getContainerId(containerName: string): Promise<string | undefined> {
   const containers = await docker.listContainers({
     all: true,
     filters: {
@@ -19,8 +24,7 @@ export async function containerWithName(containerName: string): Promise<string |
     },
   });
 
-  if (containers.length === 0) return null;
-  else return containers[0].Id;
+  return containers.at(0)?.Id;
 }
 
 /** Returns the first image ID with the given image if it exists, otherwise `null`.
@@ -42,19 +46,62 @@ export async function imageExists(imageName: string): Promise<boolean> {
   return images.length !== 0;
 }
 
+/** Checks if the network used by Dria images exist. If not, it creates the network. */
 export async function checkNetwork() {
-  await docker.createNetwork({
-    Name: "dria-network",
-    Driver: "bridge",
-    Attachable: true,
-    IPAM: {
-      Driver: "default",
-      Config: [
-        {
-          Subnet: "172.30.0.0/24",
-          Gateway: "172.30.0.1",
-        },
-      ],
+  const networks = await docker.listNetworks({
+    filters: {
+      name: [constants.NETWORK.NAME],
     },
   });
+
+  if (networks.length === 0) {
+    console.log("Creating network:", constants.NETWORK.NAME);
+    await docker.createNetwork({
+      Name: constants.NETWORK.NAME,
+      Driver: "bridge",
+      Attachable: true,
+      IPAM: {
+        Driver: "default",
+        Config: [
+          {
+            Subnet: constants.NETWORK.SUBNET,
+            Gateway: constants.NETWORK.GATEWAY,
+          },
+        ],
+      },
+    });
+  }
+}
+
+/** Pings the Docker engine, throws a string error if the engine is offline. */
+export async function checkDocker() {
+  try {
+    await docker.ping();
+  } catch (err) {
+    throw "Docker not detected! Is the Docker engine online?";
+  }
+}
+
+/** Sleep for the given amount of milliseconds. */
+export async function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
+}
+
+/**
+ * Safely removes a container, that is to stop it if its running
+ * and then remove the container.
+ *
+ * @param containerId container id
+ */
+export async function safeRemoveContainer(containerId: string) {
+  const container = docker.getContainer(containerId);
+  const info = await container.inspect();
+
+  if (info.State.Running) {
+    await container.stop();
+  }
+
+  await container.remove();
 }

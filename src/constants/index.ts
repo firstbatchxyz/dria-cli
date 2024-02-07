@@ -1,6 +1,10 @@
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
 export default {
+  LOGGER: {
+    NAME: "dria-logger",
+    LEVEL: "info",
+  },
   PORTS: {
     REDIS: 6379,
     HOLLOWDB: 3000,
@@ -18,6 +22,8 @@ export default {
   } as const satisfies Record<ENTITIES, string>,
   NETWORK: {
     NAME: "dria-network",
+    SUBNET: "172.30.0.0/24",
+    GATEWAY: "172.30.0.1",
     IPS: {
       REDIS: "172.30.0.11",
       HOLLOWDB: "172.30.0.12",

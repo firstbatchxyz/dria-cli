@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "dockerode": "^4.0.2",
+    "loglevel": "^1.9.1",
     "yargs": "^17.7.2"
   },
   "packageManager": "yarn@4.1.0"

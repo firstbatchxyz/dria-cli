@@ -28,8 +28,8 @@ dria pull [contract-id]
 # serve a knowledge
 dria serve [contract-id]
 
-# stop serving a knowledge
-dria stop [contract-id]
+# stop serving
+dria stop
 
 # clear downloaded data
 dria clear [contract-id]
