@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-import { cmdPull } from "./commands/pull";
+import commands from "./commands/";
 import { checkDocker, checkNetwork } from "./common";
-import { cmdServe } from "./commands/serve";
 import { getConfig } from "./configurations";
 
-const command: string = "pull";
+const command: string = "stop";
 
 async function main() {
   // pre-requisites
@@ -13,14 +12,25 @@ async function main() {
   await checkDocker();
   await checkNetwork();
 
-  if (command === "pull") {
-    await cmdPull(cfg.wallet, cfg.contract);
-  } else if (command === "serve") {
-    await cmdServe(cfg.contract);
+  switch (command) {
+    case "pull": {
+      await commands.pull(cfg.wallet, cfg.contract);
+      break;
+    }
+    case "serve": {
+      await commands.serve(cfg.contract);
+      break;
+    }
+    case "stop": {
+      await commands.stop();
+      break;
+    }
+    default:
+      console.error("Unknown command:", command);
+      break;
   }
 }
 
-// curl --fail --output /dev/null --silent --data '{"route": "STATE"}' http://localhost:3000
 main().then(
   () => process.exit(0),
   (err) => {

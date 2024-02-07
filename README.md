@@ -2,13 +2,9 @@
 
 Dria CLI is a command-line tool that can be used to interact with Dria.
 
-TODO: Warp cache and unbundled values should be stored on separate spaces
-
-TODO: try with contract WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU
-
 ## Installation
 
-Dria CLI requires NodeJS, and is available on NPM. It can be installed to your system with:
+Dria CLI requires NodeJS & Docker to be installed on your machine, and is available on NPM. It can be installed to your system with:
 
 ```sh
 npm i -g dria
@@ -20,7 +16,7 @@ Dria CLI has the following commands:
 
 ```sh
 # print information about Docker & configured contract and such?
-dria info
+dria config
 
 # load & unbundle values to your local machine
 dria pull [contract-id]
@@ -64,3 +60,9 @@ You can lint & check formatting with:
 yarn lint
 yarn format
 ```
+
+## TODO:S
+
+TODO: Warp cache and unbundled values should be stored on separate spaces
+
+TODO: try with contract WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU

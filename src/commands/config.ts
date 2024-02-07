@@ -1,5 +1,5 @@
 import { docker } from "../common";
 
-export async function cmdInfo() {
+export default async function cmdConfig() {
   return await docker.version();
 }

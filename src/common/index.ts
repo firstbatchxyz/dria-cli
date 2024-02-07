@@ -55,7 +55,7 @@ export async function checkNetwork() {
   });
 
   if (networks.length === 0) {
-    console.log("Creating network:", constants.NETWORK.NAME);
+    logger.info("Creating network:", constants.NETWORK.NAME);
     await docker.createNetwork({
       Name: constants.NETWORK.NAME,
       Driver: "bridge",

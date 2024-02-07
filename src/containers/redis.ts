@@ -7,7 +7,6 @@ export async function redisContainer(contractId: string) {
 
   // check if image exists
   if (!(await imageExists(constants.IMAGES.REDIS))) {
-    console.log("");
     await docker.pull(constants.IMAGES.REDIS);
   }
 
@@ -23,9 +22,9 @@ export async function redisContainer(contractId: string) {
     '--port', `${constants.PORTS.REDIS}`,
     '--maxmemory', '100mb',
     '--maxmemory-policy', 'allkeys-lru',
-    // '--appendonly', 'no',
-    // '--save', '""',
-    '--dbfilename', contractId + '.rdb',
+    '--appendonly', 'no',
+    // '--save', '""', // we actually want to save
+    '--dbfilename', `${contractId}.rdb`,
     '--dir', "/app/data"
   ]
 
