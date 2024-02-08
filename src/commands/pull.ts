@@ -25,7 +25,7 @@ export default async function cmdPull(walletPath: string, contractId: string) {
   await hollowdb.start();
 
   // TODO: find a better solution
-  logger.debug("Pulling the latest contract data.");
+  logger.info("Pulling the latest contract data.");
   await sleep(1000);
 
   // wait until HollowDB is ready
@@ -43,7 +43,7 @@ export default async function cmdPull(walletPath: string, contractId: string) {
       process.stdout.write(msg.slice("Contract cache is still loading, please try again shortly: ".length) + "\x1b[0G");
     } else if (res.ok) {
       console.log("");
-      logger.debug("Done!");
+      logger.info("Done!");
       break;
     }
     await sleep(250);

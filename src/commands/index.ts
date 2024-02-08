@@ -1,13 +1,13 @@
 import pull from "./pull";
 import stop from "./stop";
+import list from "./list";
 import serve from "./serve";
 import clear from "./clear";
-import config from "./config";
 
 export default {
   pull,
   stop,
+  list,
   serve,
   clear,
-  config,
 } as const;

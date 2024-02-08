@@ -5,7 +5,7 @@ import { resolve } from "path";
 export async function redisContainer(contractId: string) {
   const portBinding = `${constants.PORTS.REDIS}/tcp`;
 
-  const hostDataDir = resolve(`${constants.DRIA_PATH}/data`);
+  const hostDataDir = resolve(constants.DRIA.DATA);
   const containerDataDir = "/app/data";
 
   // check if image exists

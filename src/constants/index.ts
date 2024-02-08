@@ -1,8 +1,17 @@
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
+// "~/.dria/",
+const DRIA_ROOT = "./.dria";
+
 export default {
-  // DRIA_PATH: "~/.dria/",
-  DRIA_PATH: "./.dria/",
+  DRIA: {
+    /** Path to Dria root directory. */
+    PATH: DRIA_ROOT,
+    /** Path to Dria config. */
+    CONFIG: DRIA_ROOT + "/.driarc.json",
+    /** Path to Dria pulled contract data directory. */
+    DATA: DRIA_ROOT + "/data",
+  },
   LOGGER: {
     NAME: "dria-logger",
     LEVEL: "info",

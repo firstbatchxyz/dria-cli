@@ -55,7 +55,7 @@ export async function checkNetwork() {
   });
 
   if (networks.length === 0) {
-    logger.info("Creating network:", constants.NETWORK.NAME);
+    logger.debug("Required network:", constants.NETWORK.NAME, "not found, creating now.");
     await docker.createNetwork({
       Name: constants.NETWORK.NAME,
       Driver: "bridge",
@@ -78,7 +78,7 @@ export async function checkDocker() {
   try {
     await docker.ping();
   } catch (err) {
-    throw "Docker not detected! Is the Docker engine online?";
+    throw new Error("Docker not detected! Is the Docker engine online?");
   }
 }
 

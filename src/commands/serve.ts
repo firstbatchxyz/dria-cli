@@ -1,4 +1,5 @@
 import { logger } from "../common";
+import constants from "../constants";
 import { redisContainer, hnswContainer } from "../containers";
 
 /**
@@ -8,11 +9,13 @@ import { redisContainer, hnswContainer } from "../containers";
  * @param contractId contract ID
  */
 export default async function cmdServe(contractId: string) {
-  logger.info("Running Redis.");
+  logger.debug("Running Redis.");
   const redis = await redisContainer(contractId);
   await redis.start();
 
-  logger.info("Running Dria HNSW.");
+  logger.debug("Running Dria HNSW.");
   const hnsw = await hnswContainer(contractId);
   await hnsw.start();
+
+  logger.info("Knowledge", contractId, "is served on:", `http://localhost:${constants.PORTS.HNSW}`);
 }

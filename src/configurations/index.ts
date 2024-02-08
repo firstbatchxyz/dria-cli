@@ -6,23 +6,33 @@ export type DriaCLIConfig = {
   contract?: string;
   /** Defualt absolute path to wallet. */
   wallet?: string;
-  /** Log-level is `info` by default, but becomes `debug` when verbose. */
-  verbose: boolean;
+  /** List of interacted contracts. */
+  history: string[];
 };
 
 const defaultConfig: DriaCLIConfig = {
   contract: undefined,
   wallet: undefined,
-  verbose: false,
+  history: [],
 };
 
+const CONFIG_PATH = constants.DRIA.CONFIG;
+
 export function getConfig(): DriaCLIConfig {
-  const path = constants.DRIA_PATH + ".driarc.json";
-  if (existsSync(path)) {
-    const config = JSON.parse(readFileSync(path, "utf-8")) as DriaCLIConfig;
+  if (existsSync(CONFIG_PATH)) {
+    const config = JSON.parse(readFileSync(CONFIG_PATH, "utf-8")) as DriaCLIConfig;
     return config;
   } else {
-    writeFileSync(path, JSON.stringify(defaultConfig));
+    writeFileSync(CONFIG_PATH, JSON.stringify(defaultConfig));
     return defaultConfig;
   }
+}
+
+export function setConfig(args: Partial<Omit<DriaCLIConfig, "history">>) {
+  const cfg = getConfig();
+
+  if (args.contract) cfg.contract = args.contract;
+  if (args.wallet) cfg.wallet = args.wallet;
+
+  writeFileSync(CONFIG_PATH, JSON.stringify(cfg));
 }
