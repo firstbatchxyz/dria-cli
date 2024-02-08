@@ -82,7 +82,12 @@ export async function checkDocker() {
   }
 }
 
-/** Sleep for the given amount of milliseconds. */
+/** Sleep for the given amount of milliseconds.
+ *
+ * @param ms number of milliseconds
+ * @example
+ * await sleep(1000);
+ */
 export async function sleep(ms: number) {
   return new Promise<void>((resolve) => {
     setTimeout(() => resolve(), ms);

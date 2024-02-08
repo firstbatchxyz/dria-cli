@@ -1,4 +1,0 @@
-*
-!.gitignore
-
-# when working locally, redis disk-saves will be stored here

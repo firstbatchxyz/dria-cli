@@ -1,19 +1,17 @@
+import { dirname } from "path";
 import constants from "../constants";
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 
 export type DriaCLIConfig = {
   /** Defualt Contract ID to fall-back if none is provided. */
   contract?: string;
   /** Defualt absolute path to wallet. */
   wallet?: string;
-  /** List of interacted contracts. */
-  history: string[];
 };
 
 const defaultConfig: DriaCLIConfig = {
   contract: undefined,
   wallet: undefined,
-  history: [],
 };
 
 const CONFIG_PATH = constants.DRIA.CONFIG;
@@ -23,12 +21,13 @@ export function getConfig(): DriaCLIConfig {
     const config = JSON.parse(readFileSync(CONFIG_PATH, "utf-8")) as DriaCLIConfig;
     return config;
   } else {
+    mkdirSync(dirname(CONFIG_PATH), { recursive: true });
     writeFileSync(CONFIG_PATH, JSON.stringify(defaultConfig));
     return defaultConfig;
   }
 }
 
-export function setConfig(args: Partial<Omit<DriaCLIConfig, "history">>) {
+export function setConfig(args: DriaCLIConfig) {
   const cfg = getConfig();
 
   if (args.contract) cfg.contract = args.contract;

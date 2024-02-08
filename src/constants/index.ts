@@ -1,17 +1,19 @@
+import { homedir } from "os";
+
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
 // "~/.dria/",
-const DRIA_ROOT = "./.dria";
+const DRIA_ROOT = homedir() + "/.dria";
 
 export default {
   DRIA: {
     /** Path to Dria root directory. */
     PATH: DRIA_ROOT,
     /** Path to Dria config. */
-    CONFIG: DRIA_ROOT + "/.driarc.json",
+    CONFIG: `${DRIA_ROOT}/.driarc.json`,
     /** Path to Dria pulled contract data directory. */
-    DATA: DRIA_ROOT + "/data",
-  },
+    DATA: `${DRIA_ROOT}/data`,
+  } as const,
   LOGGER: {
     NAME: "dria-logger",
     LEVEL: "info",

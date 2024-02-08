@@ -28,7 +28,13 @@ const walletArg = {
     string: true,
     default: config.wallet,
     // map a given path to absolute so that Docker can use it
-    coerce: (path: string) => resolve(path),
+    coerce: (path: string) => {
+      path = resolve(path);
+      if (!existsSync(path)) {
+        throw new Error("No wallet found at: " + path);
+      }
+      return path;
+    },
   } as const,
 } as const;
 
@@ -111,31 +117,36 @@ yargs(hideBin(process.argv))
   )
 
   .command(
+    "set-contract <contract>",
+    "Set default contract.",
+    (yargs) => yargs.option(contractIdArg.id, { ...contractIdArg.opts, demandOption: true }),
+    (args) => {
+      console.log({ args });
+      setConfig({
+        contract: args.contract,
+      });
+    },
+  )
+
+  .command(
+    "set-wallet <wallet>",
+    "Set default wallet.",
+    (yargs) => yargs.option(walletArg.id, { ...walletArg.opts, demandOption: true }),
+    (args) => {
+      setConfig({
+        wallet: args.wallet,
+      });
+    },
+  )
+
+  .command(
     "config",
-    "Print Dria config.",
+    "Show default configurations.",
     (yargs) => yargs,
     () => {
       const cfg = getConfig();
       logger.info("Wallet:   ", cfg.wallet ?? "not set.");
       logger.info("Contract: ", cfg.contract ?? "not set.");
-    },
-  )
-
-  .command(
-    "set",
-    "Update Dria config.",
-    (yargs) =>
-      yargs
-        .option(walletArg.id, walletArg.opts)
-        .option(contractIdArg.id, contractIdArg.opts)
-        .check((argv) => {
-          if (argv.contract === undefined && argv.wallet === undefined) {
-            throw new Error("At least one argument expected.");
-          }
-          return true;
-        }),
-    (args) => {
-      setConfig(args);
     },
   )
 
