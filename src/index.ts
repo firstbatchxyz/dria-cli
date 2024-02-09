@@ -7,7 +7,8 @@ import { checkDocker, checkNetwork, logger } from "./common";
 
 import { getConfig, setConfig } from "./configurations";
 import { resolve } from "path";
-import { existsSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
+import constants from "./constants";
 const config = getConfig();
 
 const contractIdArg = {
@@ -17,6 +18,13 @@ const contractIdArg = {
     describe: "Contract ID",
     type: "string",
     default: config.contract,
+    coerce: (contractId: string) => {
+      const path = `${constants.DRIA.DATA}/${contractId}`;
+      if (!existsSync(path)) {
+        mkdirSync(path, { recursive: true });
+      }
+      return contractId;
+    },
   } as const,
 } as const;
 
@@ -121,7 +129,6 @@ yargs(hideBin(process.argv))
     "Set default contract.",
     (yargs) => yargs.option(contractIdArg.id, { ...contractIdArg.opts, demandOption: true }),
     (args) => {
-      console.log({ args });
       setConfig({
         contract: args.contract,
       });

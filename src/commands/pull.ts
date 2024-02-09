@@ -24,13 +24,14 @@ export default async function cmdPull(walletPath: string, contractId: string) {
   const hollowdb = await hollowdbContainer(walletPath, contractId);
   await hollowdb.start();
 
-  // TODO: find a better solution
   logger.info("Pulling the latest contract data.");
+  // TODO: find a better solution to wait for server-startup
   await sleep(1000);
 
   // wait until HollowDB is ready
+  const url = `http://localhost:${constants.PORTS.HOLLOWDB}`;
   while (true) {
-    const res = await fetch(`http://localhost:${constants.PORTS.HOLLOWDB}`, {
+    const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify({
         route: "STATE",
@@ -42,14 +43,12 @@ export default async function cmdPull(walletPath: string, contractId: string) {
       const msg = await res.text();
       process.stdout.write(msg.slice("Contract cache is still loading, please try again shortly: ".length) + "\x1b[0G");
     } else if (res.ok) {
-      console.log("");
-      logger.info("Done!");
+      logger.info("\nDone! Cleaning up...");
       break;
     }
     await sleep(250);
   }
 
-  logger.debug("Cleaning up.");
   await hollowdb.stop();
   await redis.stop();
 

@@ -1,4 +1,5 @@
 import { homedir } from "os";
+import { resolve } from "path";
 
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
@@ -12,7 +13,7 @@ export default {
     /** Path to Dria config. */
     CONFIG: `${DRIA_ROOT}/.driarc.json`,
     /** Path to Dria pulled contract data directory. */
-    DATA: `${DRIA_ROOT}/data`,
+    DATA: resolve(`${DRIA_ROOT}/data`),
   } as const,
   LOGGER: {
     NAME: "dria-logger",

@@ -16,7 +16,7 @@ export default function cmdList() {
   } else {
     for (const file of files) {
       const lastModified = statSync(`${constants.DRIA.DATA}/${file}`).mtime.toLocaleString();
-      logger.info(`${file.slice(0, file.lastIndexOf("."))}\t(last modified: ${lastModified})`);
+      logger.info(`${file.split(".")[0]}\t(last modified: ${lastModified})`);
     }
   }
   // logger.info(files.length ? files.map((v) => "  " + v).join("\n") : "  no contracts pulled yet!");

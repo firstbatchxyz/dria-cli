@@ -21,8 +21,8 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
     Image: constants.IMAGES.HOLLOWDB,
     name: constants.CONTAINERS.HOLLOWDB,
     Env: [
-      // "REDIS=redis://default:redispw@redis:6379",
       `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
+      `ROCKSDB_PATH=/app/data/${contractId}`,
       `CONTRACT_TXID=${contractId}`,
       "USE_BUNDLR=true", // true if your contract uses Bundlr
       "USE_HTX=true", // true if your contract stores values as `hash.txid`
@@ -30,7 +30,11 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
     ],
     ExposedPorts: { [portBinding]: {} },
     HostConfig: {
-      Binds: [walletPath + ":/app/config/wallet.json:ro"],
+      // prettier-ignore
+      Binds: [
+        `${walletPath}:/app/config/wallet.json:ro`,
+        `${constants.DRIA.DATA}:/app/data`
+      ],
       PortBindings: {
         [portBinding]: [{ HostPort: constants.PORTS.HOLLOWDB.toString() }],
         [redisPortBinding]: [{ HostPort: constants.PORTS.REDIS.toString() }],

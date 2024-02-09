@@ -25,7 +25,7 @@
 Dria CLI requires NodeJS & Docker to be installed on your machine, and is available on NPM. It can be installed to your system with:
 
 ```sh
-npm i -g dria
+npm i -g dria-cli
 ```
 
 ## Usage
@@ -36,9 +36,9 @@ You can see available commands with `dria help`:
 dria <command>
 
 Commands:
-  dria pull  [contract]         Pull a Dria knowledge to your local machine.
-  dria serve [contract]         Serve a local Dria knowledge.
-  dria clear [contract]         Clear local knowledge data.
+  dria pull  [contract]         Pull a Dria knowledge to your machine.
+  dria serve [contract]         Serve a pulled Dria knowledge.
+  dria clear [contract]         Clear knowledge data.
   dria set-contract <contract>  Set default contract.
   dria set-wallet <wallet>      Set default wallet.
   dria config                   Show default configurations.
@@ -65,7 +65,7 @@ dria pull -w <wallet-path>
 
 ### Serve Knowledge
 
-After [pulling](#pull-knowledge) a knowledge, you can serve a HNSW index over it with:
+After [pulling](#pull-knowledge) a knowledge, you can serve the HNSW index over it with:
 
 ```sh
 dria serve <contract>
@@ -105,7 +105,7 @@ dria list
 
 > [!NOTE]
 >
-> If a contract that you have pulled has new data inserted to it after you have pulled it, you will have to pull again to get the latest data.
+> If a knowledge has new data inserted to it, you will have to pull it again to catch up.
 
 ### Remove Knowledge
 
