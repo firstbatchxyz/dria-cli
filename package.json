@@ -1,6 +1,6 @@
 {
   "name": "dria-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A command-line tool for Dria",
   "author": "FirstBatch Team <dev@firstbatch.xyz>",
   "contributors": [
@@ -24,12 +24,15 @@
     "test": "npx jest"
   },
   "dependencies": {
+    "adm-zip": "^0.5.10",
+    "axios": "^1.6.7",
     "dockerode": "^4.0.2",
     "loglevel": "^1.9.1",
     "yargs": "^17.7.2"
   },
   "packageManager": "yarn@4.1.0",
   "devDependencies": {
+    "@types/adm-zip": "^0",
     "@types/dockerode": "^3.3.23",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.16",

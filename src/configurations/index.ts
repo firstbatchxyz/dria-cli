@@ -16,6 +16,10 @@ const defaultConfig: DriaCLIConfig = {
 
 const CONFIG_PATH = constants.DRIA.CONFIG;
 
+/**
+ * Returns the active Dria configurations.
+ * @returns config
+ */
 export function getConfig(): DriaCLIConfig {
   if (existsSync(CONFIG_PATH)) {
     const config = JSON.parse(readFileSync(CONFIG_PATH, "utf-8")) as DriaCLIConfig;
@@ -27,6 +31,7 @@ export function getConfig(): DriaCLIConfig {
   }
 }
 
+/** Updates the Dria configuration. */
 export function setConfig(args: DriaCLIConfig) {
   const cfg = getConfig();
 

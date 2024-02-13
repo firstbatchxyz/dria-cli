@@ -36,19 +36,20 @@ You can see available commands with `dria help`:
 dria <command>
 
 Commands:
-  dria pull  [contract]         Pull a Dria knowledge to your machine.
-  dria serve [contract]         Serve a pulled Dria knowledge.
-  dria clear [contract]         Clear knowledge data.
+  dria pull [contract]          Pull a knowledge to your local machine.
+  dria serve [contract]         Serve a local knowledge.
+  dria clear [contract]         Clear local knowledge.
+  dria fetch <txid>             Fetch an existing index at the given URL directly.
   dria set-contract <contract>  Set default contract.
   dria set-wallet <wallet>      Set default wallet.
   dria config                   Show default configurations.
-  dria list                     List interacted contracts.
-  dria stop                     Stop serving Dria.
+  dria list                     List all local knowledge.
+  dria stop                     Stop serving knowledge.
 
 Options:
-      --help     Show help                                             [boolean]
-      --version  Show version number                                   [boolean]
-  -v, --verbose  Show extra information               [boolean] [default: false]
+      --help     Show help                                           [boolean]
+      --version  Show version number                                 [boolean]
+  -v, --verbose  Show extra information             [boolean] [default: false]
 ```
 
 ### Pull Knowledge
@@ -79,6 +80,16 @@ The [served](#serve-knowledge) HNSW index runs in the background, and you can st
 ```sh
 dria stop
 ```
+
+### Fetch Knowledge
+
+You can download an existing HNSW index that lives in RocksDB and is zipped & uploaded to Arweave, which is much a faster option than `dria pull` command for an existing index.
+
+```sh
+dria fetch <txid>
+```
+
+Note that the argument here is not the knowledge ID (i.e. the corresponding Arweave contract txID); instead, it is the transaction ID of the bundling transaction where the RocksDB folder was zipped & uploaded to Arweave.
 
 ### Configurations
 
