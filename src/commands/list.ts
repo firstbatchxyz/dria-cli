@@ -12,7 +12,7 @@ export default function cmdList() {
     : [];
 
   if (files.length === 0) {
-    logger.info("  No contracts pulled yet!");
+    logger.info("No contracts found!");
   } else {
     for (const file of files) {
       const lastModified = statSync(`${constants.DRIA.DATA}/${file}`).mtime.toLocaleString();

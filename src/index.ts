@@ -60,6 +60,15 @@ const verboseArg = {
   } as const,
 } as const;
 
+const txIdArg = {
+  id: "txid" as const,
+  opts: {
+    describe: "Transaction ID",
+    type: "string",
+    demandOption: true,
+  } as const,
+} as const;
+
 async function checkArgs(
   args: { wallet?: string; contract?: string },
   checks: { wallet?: boolean; contract?: boolean; docker?: boolean },
@@ -86,8 +95,8 @@ yargs(hideBin(process.argv))
   .option(verboseArg.id, verboseArg.opts)
 
   .command(
-    "pull  [contract]",
-    "Pull a Dria knowledge to your local machine.",
+    "pull [contract]",
+    "Pull a knowledge to your local machine.",
     (yargs) =>
       yargs
         .option(walletArg.id, walletArg.opts)
@@ -102,7 +111,7 @@ yargs(hideBin(process.argv))
 
   .command(
     "serve [contract]",
-    "Serve a local Dria knowledge.",
+    "Serve a local knowledge.",
     (yargs) =>
       yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
         return await checkArgs(args, { contract: true, docker: true });
@@ -114,13 +123,22 @@ yargs(hideBin(process.argv))
 
   .command(
     "clear [contract]",
-    "Clear local knowledge data.",
+    "Clear local knowledge.",
     (yargs) =>
       yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
         return await checkArgs(args, { contract: true });
       }),
     async (args) => {
       await commands.clear(args.contract!);
+    },
+  )
+
+  .command(
+    "fetch <txid>",
+    "Fetch an existing index at the given URL directly.",
+    (yargs) => yargs.positional(txIdArg.id, txIdArg.opts),
+    async (args) => {
+      await commands.fetch(args.txid!);
     },
   )
 
@@ -159,7 +177,7 @@ yargs(hideBin(process.argv))
 
   .command(
     "list",
-    "List interacted contracts.",
+    "List all local knowledge.",
     (yargs) => yargs,
     () => {
       commands.list();
@@ -168,7 +186,7 @@ yargs(hideBin(process.argv))
 
   .command(
     "stop",
-    "Stop serving Dria.",
+    "Stop serving knowledge.",
     (yargs) => yargs,
     async () => {
       await commands.stop();

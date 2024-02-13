@@ -1,3 +1,4 @@
+import type { LogLevelNames } from "loglevel";
 import { homedir } from "os";
 import { resolve } from "path";
 
@@ -7,6 +8,10 @@ type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 const DRIA_ROOT = homedir() + "/.dria";
 
 export default {
+  ARWEAVE: {
+    DOWNLOAD_URL: "https://arweave.net",
+    DOWNLOAD_TIMEOUT: 600_000, // 600-second timeout
+  },
   DRIA: {
     /** Path to Dria root directory. */
     PATH: DRIA_ROOT,
@@ -17,8 +22,8 @@ export default {
   } as const,
   LOGGER: {
     NAME: "dria-logger",
-    LEVEL: "info",
-  },
+    LEVEL: "info" satisfies LogLevelNames,
+  } as const,
   PORTS: {
     REDIS: 6379,
     HOLLOWDB: 3000,

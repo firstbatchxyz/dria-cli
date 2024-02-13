@@ -9,10 +9,10 @@ import constants from "../constants";
  */
 export default async function cmdClear(contractId: string) {
   const dir = `${constants.DRIA.DATA}/${contractId}`;
-  logger.info("Removing data for contract:", contractId);
   if (existsSync(dir)) {
+    logger.info("Removing data for contract:", contractId);
     rmSync(dir, { recursive: true });
   } else {
-    logger.debug("No data found.");
+    logger.info("No data found for:", contractId);
   }
 }
