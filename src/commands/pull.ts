@@ -25,29 +25,33 @@ export default async function cmdPull(walletPath: string, contractId: string) {
   await hollowdb.start();
 
   logger.info("Pulling the latest contract data.");
-  // TODO: find a better solution to wait for server-startup
-  await sleep(1000);
+  await new Promise((resolve, reject) => {
+    hollowdb.attach({ stream: true, stdout: true, stderr: true }, function (err, stream) {
+      if (err) {
+        reject(err);
+      }
 
-  // wait until HollowDB is ready
-  const url = `http://localhost:${constants.PORTS.HOLLOWDB}`;
-  while (true) {
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        route: "STATE",
-      }),
+      // will be used to offset the progress string
+      const targetStr = "INFO (1): [";
+      if (stream) {
+        stream.on("data", (chunk: Buffer) => {
+          // hacky way to see progress by reading the container stream
+          const str: string = chunk.toString();
+
+          // finished downloading
+          if (str.includes("Server synced & ready!")) {
+            resolve(true);
+          } else {
+            const idx = str.indexOf(targetStr);
+            if (idx != -1) {
+              logger.info(str.slice(idx + targetStr.length - 1));
+            }
+          }
+        });
+      }
     });
-
-    // TODO: show progress here
-    if (res.status === 503) {
-      const msg = await res.text();
-      process.stdout.write(msg.slice("Contract cache is still loading, please try again shortly: ".length) + "\x1b[0G");
-    } else if (res.ok) {
-      logger.info("\nDone! Cleaning up...");
-      break;
-    }
-    await sleep(250);
-  }
+  });
+  logger.info("\nDone! Cleaning up...");
 
   await hollowdb.stop();
   await redis.stop();

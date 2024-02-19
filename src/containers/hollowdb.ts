@@ -1,21 +1,12 @@
-import { getContainerId, docker, imageExists, safeRemoveContainer } from "../common";
+import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
 import constants from "../constants";
 
 export async function hollowdbContainer(walletPath: string, contractId: string) {
   const portBinding = `${constants.PORTS.HOLLOWDB}/tcp`;
   const redisPortBinding = `${constants.PORTS.REDIS}/tcp`;
 
-  // check if image exists
-  if (!(await imageExists(constants.IMAGES.HOLLOWDB))) {
-    await docker.pull(constants.IMAGES.HOLLOWDB);
-  }
-
-  // check if container exists
-  // remove it if thats the case
-  const existingContainerId = await getContainerId(constants.CONTAINERS.HOLLOWDB);
-  if (existingContainerId) {
-    await safeRemoveContainer(existingContainerId);
-  }
+  await pullImageIfNotExists(constants.IMAGES.HOLLOWDB);
+  await removeContainerIfExists(constants.CONTAINERS.HOLLOWDB);
 
   return await docker.createContainer({
     Image: constants.IMAGES.HOLLOWDB,
@@ -27,6 +18,7 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
       "USE_BUNDLR=true", // true if your contract uses Bundlr
       "USE_HTX=true", // true if your contract stores values as `hash.txid`
       "BUNDLR_FBS=80", // batch size for downloading bundled values from Arweave
+      `PORT=${constants.PORTS.HOLLOWDB}`,
     ],
     ExposedPorts: { [portBinding]: {} },
     HostConfig: {

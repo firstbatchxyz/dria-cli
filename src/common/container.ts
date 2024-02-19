@@ -35,3 +35,15 @@ export async function safeRemoveContainer(containerId: string) {
 
   await container.remove();
 }
+
+/**
+ * Safely removes a container if it exists.
+ *
+ * @param containerId container id
+ */
+export async function removeContainerIfExists(containerId: string) {
+  const existingContainerId = await getContainerId(containerId);
+  if (existingContainerId) {
+    await safeRemoveContainer(existingContainerId);
+  }
+}
