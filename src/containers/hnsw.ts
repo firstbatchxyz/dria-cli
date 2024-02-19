@@ -1,21 +1,12 @@
-import { getContainerId, docker, imageExists, safeRemoveContainer } from "../common";
+import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
 import constants from "../constants";
 
 export async function hnswContainer(contractId: string) {
   const portBinding = `${constants.PORTS.HNSW}/tcp`;
   const redisPortBinding = `${constants.PORTS.REDIS}/tcp`;
 
-  // check if image exists
-  if (!(await imageExists(constants.IMAGES.HNSW))) {
-    await docker.pull(constants.IMAGES.HNSW);
-  }
-
-  // check if container exists
-  // remove it if thats the case
-  const existingContainerId = await getContainerId(constants.CONTAINERS.HNSW);
-  if (existingContainerId) {
-    await safeRemoveContainer(existingContainerId);
-  }
+  await pullImageIfNotExists(constants.IMAGES.HNSW);
+  await removeContainerIfExists(constants.CONTAINERS.HNSW);
 
   return await docker.createContainer({
     Image: constants.IMAGES.HNSW,

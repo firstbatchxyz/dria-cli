@@ -19,8 +19,8 @@
     "lint": "npx eslint './src/**/*.ts' && echo 'All good!'",
     "format": "npx prettier --check ./src/**/*.ts",
     "build": "npx tsc",
-    "c": "node ./bin/index.js",
-    "cli": "yarn build && yarn c",
+    "start": "node ./bin/index.js",
+    "dria": "yarn build && yarn start",
     "test": "npx jest"
   },
   "dependencies": {

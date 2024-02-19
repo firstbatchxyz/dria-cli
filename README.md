@@ -145,7 +145,7 @@ yarn install
 You can run the CLI as if you are calling `npx dria` with the following command:
 
 ```sh
-yarn cli
+yarn dria
 ```
 
 ## Styling

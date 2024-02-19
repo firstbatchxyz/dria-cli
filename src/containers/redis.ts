@@ -1,23 +1,14 @@
-import { getContainerId, docker, imageExists, safeRemoveContainer } from "../common";
+import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
 import constants from "../constants";
 import { resolve } from "path";
 
 export async function redisContainer(contractId: string) {
   const portBinding = `${constants.PORTS.REDIS}/tcp`;
-
   const hostDataDir = `${resolve(constants.DRIA.DATA)}/${contractId}`;
   const containerDataDir = "/app/data";
 
-  // check if image exists
-  if (!(await imageExists(constants.IMAGES.REDIS))) {
-    await docker.pull(constants.IMAGES.REDIS);
-  }
-
-  // check if container exists
-  const existingContainerId = await getContainerId(constants.CONTAINERS.REDIS);
-  if (existingContainerId) {
-    await safeRemoveContainer(existingContainerId);
-  }
+  await pullImageIfNotExists(constants.IMAGES.REDIS);
+  await removeContainerIfExists(constants.CONTAINERS.REDIS);
 
   // prettier-ignore
   const cmd: string[] = [
