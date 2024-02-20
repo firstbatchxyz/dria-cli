@@ -44,8 +44,10 @@ export async function pullImageIfNotExists(imageName: string): Promise<void> {
           }
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        function onProgress(event: unknown) {}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+        function onProgress(event: any) {
+          logger.info(event);
+        }
       });
     });
     logger.info("Pulled the latest image.");

@@ -1,4 +1,5 @@
-import { logger } from "../common";
+import { logger, safeRemoveContainer } from "../common";
+import constants from "../constants";
 import { hollowdbContainer, redisContainer } from "../containers";
 
 /**
@@ -29,6 +30,15 @@ export default async function cmdPull(contractId: string) {
         reject(err);
       }
 
+      // give 6 seconds max until downloads start, otherwise there is an error
+      let startedDownloads = false;
+      setTimeout(() => {
+        if (!startedDownloads) {
+          // TODO: containers should be stopped when this happens
+          reject(`Key refresh could not start after ${constants.HOLLOWDB.DOWNLOAD_TIMEOUT} ms.`);
+        }
+      }, constants.HOLLOWDB.DOWNLOAD_TIMEOUT);
+
       // will be used to offset the progress string
       const targetStr = "INFO (1): [";
       if (stream) {
@@ -42,6 +52,7 @@ export default async function cmdPull(contractId: string) {
           } else {
             const idx = str.indexOf(targetStr);
             if (idx != -1) {
+              startedDownloads = true;
               logger.info(str.slice(idx + targetStr.length - 1).replace("\n", ""));
             }
           }

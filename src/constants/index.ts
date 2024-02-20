@@ -10,7 +10,6 @@ const DRIA_ROOT = homedir() + "/.dria";
 export default {
   ARWEAVE: {
     DOWNLOAD_URL: "https://arweave.net",
-    DOWNLOAD_TIMEOUT: 600_000, // 600-second timeout
   },
   DRIA: {
     /** Path to Dria root directory. */
@@ -20,6 +19,9 @@ export default {
     /** Path to Dria pulled contract data directory. */
     DATA: resolve(`${DRIA_ROOT}/data`),
   } as const,
+  HOLLOWDB: {
+    DOWNLOAD_TIMEOUT: 10000, // timeout until download starts, otherwise rejects
+  },
   LOGGER: {
     NAME: "dria-logger",
     LEVEL: "info" satisfies LogLevelNames,
