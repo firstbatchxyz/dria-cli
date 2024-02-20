@@ -1,5 +1,4 @@
-import { logger, sleep } from "../common";
-import constants from "../constants";
+import { logger } from "../common";
 import { hollowdbContainer, redisContainer } from "../containers";
 
 /**
@@ -12,16 +11,15 @@ import { hollowdbContainer, redisContainer } from "../containers";
  * The saved `.rdb` file has the contract name, which can be used later by
  * Dria HNSW.
  *
- * @param walletPath wallet required for HollowDB
  * @param contractId contract ID to download
  */
-export default async function cmdPull(walletPath: string, contractId: string) {
+export default async function cmdPull(contractId: string) {
   logger.debug("Running Redis.");
   const redis = await redisContainer(contractId);
   await redis.start();
 
   logger.debug("Running HollowDB.");
-  const hollowdb = await hollowdbContainer(walletPath, contractId);
+  const hollowdb = await hollowdbContainer(contractId);
   await hollowdb.start();
 
   logger.info("Pulling the latest contract data.");
@@ -44,14 +42,14 @@ export default async function cmdPull(walletPath: string, contractId: string) {
           } else {
             const idx = str.indexOf(targetStr);
             if (idx != -1) {
-              logger.info(str.slice(idx + targetStr.length - 1));
+              logger.info(str.slice(idx + targetStr.length - 1).replace("\n", ""));
             }
           }
         });
       }
     });
   });
-  logger.info("\nDone! Cleaning up...");
+  logger.info("Done! Cleaning up...");
 
   await hollowdb.stop();
   await redis.stop();

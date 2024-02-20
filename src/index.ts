@@ -2,13 +2,12 @@
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import { existsSync, mkdirSync } from "fs";
 import commands from "./commands/";
 import { checkDocker, checkNetwork, logger } from "./common";
-
 import { getConfig, setConfig } from "./configurations";
-import { resolve } from "path";
-import { existsSync, mkdirSync } from "fs";
 import constants from "./constants";
+
 const config = getConfig();
 
 const contractIdArg = {
@@ -24,24 +23,6 @@ const contractIdArg = {
         mkdirSync(path, { recursive: true });
       }
       return contractId;
-    },
-  } as const,
-} as const;
-
-const walletArg = {
-  id: "wallet" as const,
-  opts: {
-    alias: "w",
-    describe: "Path to an Arweave wallet",
-    string: true,
-    default: config.wallet,
-    // map a given path to absolute so that Docker can use it
-    coerce: (path: string) => {
-      path = resolve(path);
-      if (!existsSync(path)) {
-        throw new Error("No wallet found at: " + path);
-      }
-      return path;
     },
   } as const,
 } as const;
@@ -69,15 +50,7 @@ const txIdArg = {
   } as const,
 } as const;
 
-async function checkArgs(
-  args: { wallet?: string; contract?: string },
-  checks: { wallet?: boolean; contract?: boolean; docker?: boolean },
-) {
-  if (checks.wallet) {
-    if (args.wallet === undefined) throw new Error("No wallet provided.");
-    if (!existsSync(args.wallet)) throw new Error("No wallet exists at: " + args.wallet);
-  }
-
+async function checkArgs(args: { contract?: string }, checks: { contract?: boolean; docker?: boolean }) {
   if (checks.contract) {
     if (args.contract === undefined) throw new Error("Contract not provided.");
   }
@@ -98,14 +71,11 @@ yargs(hideBin(process.argv))
     "pull [contract]",
     "Pull a knowledge to your local machine.",
     (yargs) =>
-      yargs
-        .option(walletArg.id, walletArg.opts)
-        .positional(contractIdArg.id, contractIdArg.opts)
-        .check(async (args) => {
-          return await checkArgs(args, { wallet: true, contract: true, docker: true });
-        }),
+      yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
+        return await checkArgs(args, { contract: true, docker: true });
+      }),
     async (args) => {
-      await commands.pull(args.wallet!, args.contract!);
+      await commands.pull(args.contract!);
     },
   )
 
@@ -154,23 +124,11 @@ yargs(hideBin(process.argv))
   )
 
   .command(
-    "set-wallet <wallet>",
-    "Set default wallet.",
-    (yargs) => yargs.option(walletArg.id, { ...walletArg.opts, demandOption: true }),
-    (args) => {
-      setConfig({
-        wallet: args.wallet,
-      });
-    },
-  )
-
-  .command(
     "config",
     "Show default configurations.",
     (yargs) => yargs,
     () => {
       const cfg = getConfig();
-      logger.info("Wallet:   ", cfg.wallet ?? "not set.");
       logger.info("Contract: ", cfg.contract ?? "not set.");
     },
   )

@@ -1,9 +1,10 @@
 import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
 import constants from "../constants";
 
-export async function hollowdbContainer(walletPath: string, contractId: string) {
+export async function hollowdbContainer(contractId: string) {
   const portBinding = `${constants.PORTS.HOLLOWDB}/tcp`;
   const redisPortBinding = `${constants.PORTS.REDIS}/tcp`;
+  const guestDataDir = "/app/data";
 
   await pullImageIfNotExists(constants.IMAGES.HOLLOWDB);
   await removeContainerIfExists(constants.CONTAINERS.HOLLOWDB);
@@ -13,8 +14,8 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
     name: constants.CONTAINERS.HOLLOWDB,
     Env: [
       `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
-      `ROCKSDB_PATH=/app/data/${contractId}`,
-      `CONTRACT_TXID=${contractId}`,
+      `ROCKSDB_PATH=${guestDataDir}/${contractId}`,
+      `CONTRACT_ID=${contractId}`,
       "USE_BUNDLR=true", // true if your contract uses Bundlr
       "USE_HTX=true", // true if your contract stores values as `hash.txid`
       "BUNDLR_FBS=80", // batch size for downloading bundled values from Arweave
@@ -23,9 +24,8 @@ export async function hollowdbContainer(walletPath: string, contractId: string) 
     ExposedPorts: { [portBinding]: {} },
     HostConfig: {
       // prettier-ignore
-      Binds: [
-        `${walletPath}:/app/config/wallet.json:ro`,
-        `${constants.DRIA.DATA}:/app/data`
+      Binds: [ 
+        `${constants.DRIA.DATA}:${guestDataDir}`
       ],
       PortBindings: {
         [portBinding]: [{ HostPort: constants.PORTS.HOLLOWDB.toString() }],

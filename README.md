@@ -22,7 +22,7 @@
 
 ## Installation
 
-Dria CLI requires NodeJS & Docker to be installed on your machine, and is available on NPM. It can be installed to your system with:
+Dria CLI requires NodeJS (>= 18.0.0) & Docker to be installed on your machine, and is available on NPM. It can be installed to your system with:
 
 ```sh
 npm i -g dria-cli
@@ -30,7 +30,7 @@ npm i -g dria-cli
 
 ## Usage
 
-You can see available commands with `dria help`:
+You can see available commands with `dria help`, which outputs:
 
 ```sh
 dria <command>
@@ -41,7 +41,6 @@ Commands:
   dria clear [contract]         Clear local knowledge.
   dria fetch <txid>             Fetch an existing index at the given URL directly.
   dria set-contract <contract>  Set default contract.
-  dria set-wallet <wallet>      Set default wallet.
   dria config                   Show default configurations.
   dria list                     List all local knowledge.
   dria stop                     Stop serving knowledge.
@@ -52,6 +51,12 @@ Options:
   -v, --verbose  Show extra information             [boolean] [default: false]
 ```
 
+> [!WARNING]
+>
+> If you are using Docker with `sudo` only, you must use the Dria CLI with `sudo` as well, since it needs access
+> to Docker in the background. Otherwise, the CLI will not be able to detect your Docker engine.
+> See more [here](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
+
 ### Pull Knowledge
 
 A Dria knowledge is stored on blockchain, and we can pull that knowledge to our local machine with the `pull` command:
@@ -59,9 +64,6 @@ A Dria knowledge is stored on blockchain, and we can pull that knowledge to our 
 ```sh
 dria pull <contract>
 dria pull # use configured contract
-
-# provide a wallet
-dria pull -w <wallet-path>
 ```
 
 ### Serve Knowledge
@@ -93,22 +95,19 @@ Note that the argument here is not the knowledge ID (i.e. the corresponding Arwe
 
 ### Configurations
 
-You can set the default wallet & contract with `set-contract` and `set-wallet` commands respectively. When a contract is set by default, `[contract]` can be omitted such that the CLI will use the default one. To see the defaults:
+You can set the default contract with `set-contract` command. When a contract is set by default, `[contract]` can be omitted such that the CLI will use the default one. To see the defaults:
 
 ```sh
-# view configured wallet & contract
+# view configurations
 dria config
 
 # change contract
 dria set-contract <contract>
-
-# change wallet
-dria set-wallet ./path/to/wallet.json
 ```
 
-### List Pulled Knowledge
+### List Knowledge
 
-You can print out the list of contracts [pulled](#pull-knowledge) so far, along with their last modification date, with the command:
+You can print out the list of contracts [pulled](#pull-knowledge) or [fetched](#fetch-knowledge) so far, along with their last modification date, with the command:
 
 ```sh
 dria list
