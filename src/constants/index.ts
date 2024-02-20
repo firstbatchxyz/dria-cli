@@ -18,6 +18,8 @@ export default {
     CONFIG: `${DRIA_ROOT}/.driarc.json`,
     /** Path to Dria pulled contract data directory. */
     DATA: resolve(`${DRIA_ROOT}/data`),
+    /** Temporary Dria path, used for zip buffer. */
+    TMP: resolve(`${DRIA_ROOT}/tmp`),
   } as const,
   HOLLOWDB: {
     DOWNLOAD_TIMEOUT: 10000, // timeout until download starts, otherwise rejects

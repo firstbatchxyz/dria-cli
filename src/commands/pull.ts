@@ -1,4 +1,4 @@
-import { logger, safeRemoveContainer } from "../common";
+import { logger } from "../common";
 import constants from "../constants";
 import { hollowdbContainer, redisContainer } from "../containers";
 

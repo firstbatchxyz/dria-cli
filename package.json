@@ -1,11 +1,12 @@
 {
   "name": "dria-cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A command-line tool for Dria",
   "author": "FirstBatch Team <dev@firstbatch.xyz>",
   "contributors": [
     "Erhan Tezcan <erhan@firstbatch.xyz> (https://github.com/erhant)"
   ],
+  "homepage": "https://github.com/firstbatchxyz/dria-cli#readme",
   "license": "Apache-2.0",
   "files": [
     "/bin",

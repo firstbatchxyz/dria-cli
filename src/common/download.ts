@@ -2,7 +2,7 @@ import Axios from "axios";
 import unzipper from "unzipper";
 import constants from "../constants";
 import { logger } from ".";
-import { createReadStream, createWriteStream, rmSync } from "fs";
+import { createReadStream, createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
 
 /** Download a zipped data from Arweave, unzip & extract it at a given path.
  *
@@ -17,7 +17,10 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
   logger.info("Downloading from", url);
 
   // download the file using a stream (due to large size)
-  const tmpPath = `/tmp/${txId}.zip`;
+  if (!existsSync(constants.DRIA.TMP)) {
+    mkdirSync(constants.DRIA.TMP, { recursive: true });
+  }
+  const tmpPath = `${constants.DRIA.TMP}/${txId}.zip`;
   const writer = createWriteStream(tmpPath);
   await Axios({
     url,
