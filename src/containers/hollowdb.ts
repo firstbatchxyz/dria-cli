@@ -13,7 +13,7 @@ export async function hollowdbContainer(contractId: string) {
     Image: constants.IMAGES.HOLLOWDB,
     name: constants.CONTAINERS.HOLLOWDB,
     Env: [
-      `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
+      `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:${constants.PORTS.REDIS}`,
       `ROCKSDB_PATH=${guestDataDir}/${contractId}`,
       `CONTRACT_ID=${contractId}`,
       "USE_BUNDLR=true", // true if your contract uses Bundlr

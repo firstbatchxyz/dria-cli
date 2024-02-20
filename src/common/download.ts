@@ -8,21 +8,22 @@ import { createReadStream, createWriteStream, rmSync } from "fs";
  *
  * Uses streaming to write request to tmp disk, and then to target folder due to large size.
  *
- * @param txid txID on Arweave
+ * @param txId txID on Arweave
  * @param outDir output directory for the extraction file
  */
-export async function downloadAndUnzip(contractId: string, outDir: string) {
-  const url = `${constants.ARWEAVE.DOWNLOAD_URL}/${contractId}`;
+export async function downloadAndUnzip(txId: string, outDir: string) {
+  const url = `${constants.ARWEAVE.DOWNLOAD_URL}/${txId}`;
 
   logger.info("Downloading from", url);
 
   // download the file using a stream (due to large size)
-  const tmpPath = `/tmp/${contractId}.zip`;
+  const tmpPath = `/tmp/${txId}.zip`;
   const writer = createWriteStream(tmpPath);
   await Axios({
     url,
     method: "get",
-    timeout: constants.ARWEAVE.DOWNLOAD_TIMEOUT,
+    timeout: 0, // no timeouts
+    // TODO: connecting axios stream to unzipper could work, but couldnt solve it yet
     responseType: "stream",
     // show download progress here
     onDownloadProgress(progressEvent) {
@@ -50,11 +51,13 @@ export async function downloadAndUnzip(contractId: string, outDir: string) {
     });
   });
 
-  // unzip to correct folder
-  // TODO: connecting axios stream to unzipper could work, but couldnt solve it yet
-  createReadStream(tmpPath).pipe(unzipper.Extract({ path: outDir }));
-  logger.info("Knowledge extracted at", outDir);
-
-  // cleanup temporary zip
-  rmSync(tmpPath);
+  // unzip to out directory
+  createReadStream(tmpPath)
+    .pipe(unzipper.Extract({ path: outDir }))
+    .on("close", () => {
+      logger.info("Knowledge extracted at", outDir);
+      logger.info("Cleaning up zip artifacts.");
+      rmSync(tmpPath);
+      logger.info("Done.");
+    });
 }

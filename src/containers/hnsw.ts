@@ -13,9 +13,10 @@ export async function hnswContainer(contractId: string) {
     Image: constants.IMAGES.HNSW,
     name: constants.CONTAINERS.HNSW,
     Env: [
-      `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:6379`,
+      `REDIS_URL=redis://default:redispw@${constants.NETWORK.IPS.REDIS}:${constants.PORTS.REDIS}`,
       `CONTRACT_ID=${contractId}`,
       `ROCKSDB_PATH=${guestDataDir}/${contractId}`,
+      `PORT=${constants.PORTS.HNSW}`,
     ],
     ExposedPorts: { [portBinding]: {} },
     HostConfig: {
