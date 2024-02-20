@@ -3,15 +3,12 @@ import constants from "../constants";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 
 export type DriaCLIConfig = {
-  /** Defualt Contract ID to fall-back if none is provided. */
+  /** Default Contract ID to fall-back if none is provided. */
   contract?: string;
-  /** Defualt absolute path to wallet. */
-  wallet?: string;
 };
 
 const defaultConfig: DriaCLIConfig = {
   contract: undefined,
-  wallet: undefined,
 };
 
 const CONFIG_PATH = constants.DRIA.CONFIG;
@@ -36,7 +33,6 @@ export function setConfig(args: DriaCLIConfig) {
   const cfg = getConfig();
 
   if (args.contract) cfg.contract = args.contract;
-  if (args.wallet) cfg.wallet = args.wallet;
 
   writeFileSync(CONFIG_PATH, JSON.stringify(cfg));
 }
