@@ -47,12 +47,13 @@ export default async function cmdPull(contractId: string) {
           const str: string = chunk.toString();
 
           // finished downloading
-          if (str.includes("Server synced & ready!")) {
+          if (str.includes("Waiting for cache")) {
+            startedDownloads = true;
+          } else if (str.includes("Server synced & ready!")) {
             resolve(true);
           } else {
             const idx = str.indexOf(targetStr);
             if (idx != -1) {
-              startedDownloads = true;
               logger.info(str.slice(idx + targetStr.length - 1).replace("\n", ""));
             }
           }

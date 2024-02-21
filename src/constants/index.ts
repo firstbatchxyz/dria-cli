@@ -22,7 +22,7 @@ export default {
     TMP: resolve(`${DRIA_ROOT}/tmp`),
   } as const,
   HOLLOWDB: {
-    DOWNLOAD_TIMEOUT: 10000, // timeout until download starts, otherwise rejects
+    DOWNLOAD_TIMEOUT: 15000, // timeout until download starts, otherwise rejects
   },
   LOGGER: {
     NAME: "dria-logger",

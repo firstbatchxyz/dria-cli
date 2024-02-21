@@ -1,4 +1,4 @@
-import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
+import { docker, pullImage, removeContainerIfExists } from "../common";
 import constants from "../constants";
 import { resolve } from "path";
 
@@ -7,7 +7,7 @@ export async function redisContainer(contractId: string) {
   const hostDataDir = `${resolve(constants.DRIA.DATA)}/${contractId}`;
   const containerDataDir = "/app/data";
 
-  await pullImageIfNotExists(constants.IMAGES.REDIS);
+  await pullImage(constants.IMAGES.REDIS);
   await removeContainerIfExists(constants.CONTAINERS.REDIS);
 
   // prettier-ignore

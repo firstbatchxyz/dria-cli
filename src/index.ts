@@ -2,11 +2,9 @@
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { existsSync, mkdirSync } from "fs";
 import commands from "./commands/";
 import { checkDocker, checkNetwork, logger } from "./common";
 import { getConfig, setConfig } from "./configurations";
-import constants from "./constants";
 
 const config = getConfig();
 
@@ -17,13 +15,6 @@ const contractIdArg = {
     describe: "Contract ID",
     type: "string",
     default: config.contract,
-    coerce: (contractId: string) => {
-      const path = `${constants.DRIA.DATA}/${contractId}`;
-      if (!existsSync(path)) {
-        mkdirSync(path, { recursive: true });
-      }
-      return contractId;
-    },
   } as const,
 } as const;
 

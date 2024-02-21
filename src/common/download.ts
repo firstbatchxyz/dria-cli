@@ -56,7 +56,7 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
 
   // unzip to out directory
   createReadStream(tmpPath)
-    .pipe(unzipper.Extract({ path: outDir }))
+    .pipe(unzipper.Extract({ path: outDir, verbose: true }))
     .on("close", () => {
       logger.info("Knowledge extracted at", outDir);
       logger.info("Cleaning up zip artifacts.");

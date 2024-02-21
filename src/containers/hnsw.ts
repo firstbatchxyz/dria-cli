@@ -1,4 +1,4 @@
-import { docker, pullImageIfNotExists, removeContainerIfExists } from "../common";
+import { docker, pullImage, removeContainerIfExists } from "../common";
 import constants from "../constants";
 
 export async function hnswContainer(contractId: string) {
@@ -6,7 +6,7 @@ export async function hnswContainer(contractId: string) {
   const redisPortBinding = `${constants.PORTS.REDIS}/tcp`;
   const guestDataDir = "/data";
 
-  await pullImageIfNotExists(constants.IMAGES.HNSW);
+  await pullImage(constants.IMAGES.HNSW);
   await removeContainerIfExists(constants.CONTAINERS.HNSW);
 
   return await docker.createContainer({

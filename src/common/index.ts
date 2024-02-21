@@ -1,6 +1,7 @@
 import Docker from "dockerode";
 import loglevel from "loglevel";
 import constants from "../constants";
+import { existsSync, mkdirSync } from "fs";
 
 export * from "./download";
 export * from "./image";

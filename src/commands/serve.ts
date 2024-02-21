@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import { logger } from "../common";
 import constants from "../constants";
 import { redisContainer, hnswContainer } from "../containers";
@@ -9,6 +10,13 @@ import { redisContainer, hnswContainer } from "../containers";
  * @param contractId contract ID
  */
 export default async function cmdServe(contractId: string) {
+  const path = `${constants.DRIA.DATA}/${contractId}`;
+  if (!existsSync(path)) {
+    logger.info("No knowledge found for", contractId);
+    logger.info("Type `dria list` to see available ones.");
+    return;
+  }
+
   logger.debug("Running Redis.");
   const redis = await redisContainer(contractId);
   await redis.start();

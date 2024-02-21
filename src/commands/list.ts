@@ -17,7 +17,7 @@ export default function cmdList() {
     for (const file of files) {
       const lastModified = statSync(`${constants.DRIA.DATA}/${file}`).mtime.toLocaleString();
       const name = file.split(".")[0];
-      logger.info(`${name.padEnd(45)}\t(last modified: ${lastModified})`);
+      logger.info(`${name.padEnd(45)}(last modified: ${lastModified})`);
     }
   }
 }

@@ -19,37 +19,65 @@ export async function imageExists(imageName: string): Promise<boolean> {
   return images.length !== 0;
 }
 
-/** Checks if an image exists; if not, pulls it from Docker.
+/**
+ * Pulls the latest image.
+ *
+ * We always need to pull because if both our local image & Docker Hub image has the tag `:latest` we have no easy
+ * way to know whether the sha256's are the same. Pulling every time is fine because:
+ *
+ * - If local image does not exist, you will pull the latest one
+ * - If local image is outdated, you will pull the latest one
+ * - If local image is up-to-date, you will not pull it again (the digest check happens in the background)
  *
  * @param imageName name of the image along with its tag, e.g. `redis:alpine`
  */
-export async function pullImageIfNotExists(imageName: string): Promise<void> {
-  const exists = await imageExists(imageName);
+export async function pullImage(imageName: string): Promise<void> {
+  await new Promise((resolve, reject) => {
+    docker.pull(imageName, (err: Error, stream: NodeJS.ReadableStream) => {
+      if (err) reject(err);
 
-  if (!exists) {
-    logger.info("Pulling", imageName);
-    await new Promise((resolve, reject) => {
-      docker.pull(imageName, (err: Error, stream: NodeJS.ReadableStream) => {
-        if (err) reject(err);
+      docker.modem.followProgress(stream, onFinished, onProgress);
 
-        docker.modem.followProgress(stream, onFinished, onProgress);
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        function onFinished(err: Error | null, output: unknown) {
-          //output is an array with output json parsed objects
-          if (err) {
-            reject(err);
-          } else {
-            resolve(true);
-          }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      function onFinished(err: Error | null, output: unknown) {
+        //output is an array with output json parsed objects
+        if (err) {
+          reject(err);
+        } else {
+          resolve(true);
         }
+      }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-        function onProgress(event: any) {
-          logger.info(event);
-        }
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+      function onProgress(event: PullProgress) {
+        if (event.status == "Downloading" || event.status == "Extracting") {
+          logger.info(`${event.status} ${event.id}: ${event.progress}`);
+        } else if (event.status.startsWith("Status: Downloaded newer image"))
+          logger.info("Image", imageName, "updated.");
+      }
     });
-    logger.info("Pulled the latest image.");
-  }
+  });
 }
+
+type PullProgress =
+  | {
+      status:
+        | `Digest: sha256:${string}`
+        | `Status: Downloaded newer image for ${string}`
+        | `Status: Image is up to date for ${string}`;
+    }
+  | {
+      status: `Pulling from ${string}`;
+      id: string;
+    }
+  | {
+      status: "Already exists" | "Pull complete" | "Verifying Checksum" | "Download complete";
+      progressDetail: Record<string, never>; // empty object
+      id: string;
+    }
+  | {
+      status: "Downloading" | "Extracting";
+      progressDetail: { current: number; total: number };
+      progress: string; // something like [===>    ] cur/total
+      id: string;
+    };

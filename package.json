@@ -1,6 +1,6 @@
 {
   "name": "dria-cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A command-line tool for Dria",
   "author": "FirstBatch Team <dev@firstbatch.xyz>",
   "contributors": [
