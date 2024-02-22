@@ -4,11 +4,11 @@ import { resolve } from "path";
 
 type ENTITIES = "REDIS" | "HOLLOWDB" | "HNSW";
 
-// "~/.dria/",
-const DRIA_ROOT = homedir() + "/.dria";
+const DRIA_ROOT = homedir() + "/.dria"; // "~/.dria/",
 
 export default {
   ARWEAVE: {
+    /** Base URL for `fetch` command. */
     DOWNLOAD_URL: "https://arweave.net",
   },
   DRIA: {
@@ -22,7 +22,9 @@ export default {
     TMP: resolve(`${DRIA_ROOT}/tmp`),
   } as const,
   HOLLOWDB: {
-    DOWNLOAD_TIMEOUT: 15000, // timeout until download starts, otherwise rejects
+    /** Timeout until download starts during `pull`,
+     * if download doesn't start by then, it gives an error. */
+    DOWNLOAD_TIMEOUT: 15000,
   },
   LOGGER: {
     NAME: "dria-logger",
@@ -38,13 +40,20 @@ export default {
     HOLLOWDB: "firstbatch/dria-hollowdb:latest",
     HNSW: "firstbatch/dria-hnsw:latest",
   } as const satisfies Record<ENTITIES, string>,
-  CONTAINERS: {
-    REDIS: "dria-redis",
-    HOLLOWDB: "dria-hollowdb",
-    HNSW: "dria-hnsw",
-  } as const satisfies Record<ENTITIES, string>,
+  CONTAINERS:
+    process.env.NODE_ENV === "test"
+      ? ({
+          REDIS: "dria-redis-testing",
+          HOLLOWDB: "dria-hollowdb-testing",
+          HNSW: "dria-hnsw-testing",
+        } as const satisfies Record<ENTITIES, `${string}-testing`>)
+      : ({
+          REDIS: "dria-redis",
+          HOLLOWDB: "dria-hollowdb",
+          HNSW: "dria-hnsw",
+        } as const satisfies Record<ENTITIES, string>),
   NETWORK: {
-    NAME: "dria-network",
+    NAME: process.env.NODE_ENV === "test" ? "dria-network-testing" : "dria-network",
     SUBNET: "172.30.0.0/24",
     GATEWAY: "172.30.0.1",
     IPS: {
