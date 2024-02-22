@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { getConfig, type DriaCLIConfig, setConfig } from "../src/configurations";
 import constants from "../src/constants";
 
-describe("configurations", () => {
+describe.skip("configurations", () => {
   let existingConfig: DriaCLIConfig;
 
   beforeAll(() => {

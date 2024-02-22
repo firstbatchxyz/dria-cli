@@ -7,17 +7,14 @@ const config: JestConfigWithTsJest = {
   transform: {
     "^.+\\.(ts|js)$": "ts-jest",
   },
-  // environment setup & teardown scripts
-  // setup & teardown for spinning up arlocal
-  // globalSetup: "<rootDir>/tests/environment/setup.ts",
-  // globalTeardown: "<rootDir>/tests/environment/teardown.ts",
-  // timeout should be rather large, especially for the workflows
+  // timeout should be rather large due to Docker stuff
   testTimeout: 60000,
-  // warp & arlocal takes some time to close, so make this 10 secs
+  // docker containers may take some time to close
   openHandlesTimeout: 10000,
   // print everything like Mocha
   verbose: true,
-  testPathIgnorePatterns: ["bin"],
+  // ignore output directory
+  testPathIgnorePatterns: ["bin", "node_modules", "src"],
 };
 
 export default config;
