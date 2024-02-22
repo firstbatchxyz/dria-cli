@@ -52,14 +52,26 @@ export default {
           HOLLOWDB: "dria-hollowdb",
           HNSW: "dria-hnsw",
         } as const satisfies Record<ENTITIES, string>),
-  NETWORK: {
-    NAME: process.env.NODE_ENV === "test" ? "dria-network-testing" : "dria-network",
-    SUBNET: "172.30.0.0/24",
-    GATEWAY: "172.30.0.1",
-    IPS: {
-      REDIS: "172.30.0.11",
-      HOLLOWDB: "172.30.0.12",
-      HNSW: "172.30.0.13",
-    } as const satisfies Record<ENTITIES, `${number}.${number}.${number}.${number}`>,
-  },
+  NETWORK:
+    process.env.NODE_ENV === "test"
+      ? {
+          NAME: "dria-network",
+          SUBNET: "172.30.0.0/24",
+          GATEWAY: "172.30.0.1",
+          IPS: {
+            REDIS: "172.30.0.11",
+            HOLLOWDB: "172.30.0.12",
+            HNSW: "172.30.0.13",
+          } as const satisfies Record<ENTITIES, `${number}.${number}.${number}.${number}`>,
+        }
+      : {
+          NAME: "dria-network-testing",
+          SUBNET: "173.30.0.0/24",
+          GATEWAY: "173.30.0.1",
+          IPS: {
+            REDIS: "173.30.0.11",
+            HOLLOWDB: "173.30.0.12",
+            HNSW: "173.30.0.13",
+          } as const satisfies Record<ENTITIES, `${number}.${number}.${number}.${number}`>,
+        },
 } as const;
