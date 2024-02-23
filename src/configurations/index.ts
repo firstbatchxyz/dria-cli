@@ -15,7 +15,10 @@ const CONFIG_PATH = constants.DRIA.CONFIG;
 
 /**
  * Returns the active Dria configurations.
- * @returns config
+ *
+ * If no existing config is found, writes the default configuration to the config destination and returns it.
+ *
+ * @returns Dria configuration
  */
 export function getConfig(): DriaCLIConfig {
   if (existsSync(CONFIG_PATH)) {
