@@ -57,7 +57,7 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
   await new Promise((resolve, reject) => {
     createReadStream(tmpPath)
       // unzips to out directory
-      .pipe(unzipper.Extract({ path: outDir, verbose: true }))
+      .pipe(unzipper.Extract({ path: outDir, verbose: process.env.NODE_ENV !== "test" }))
       .on("error", (err) => {
         reject(err);
       })

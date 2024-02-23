@@ -1,9 +1,8 @@
 import { readFileSync, writeFileSync } from "fs";
 import { getConfig, type DriaCLIConfig, setConfig } from "../src/configurations";
 import constants from "../src/constants";
-import cmdStop from "../src/commands/stop";
 
-describe.skip("configurations", () => {
+describe("configurations", () => {
   let existingConfig: DriaCLIConfig;
 
   beforeAll(() => {
@@ -12,8 +11,6 @@ describe.skip("configurations", () => {
 
   afterAll(() => {
     writeFileSync(constants.DRIA.CONFIG, JSON.stringify(existingConfig));
-
-    cmdStop();
   });
 
   it("should get config", () => {

@@ -3,21 +3,19 @@ import cmdClear from "../src/commands/clear";
 import constants from "../src/constants";
 import { existsSync } from "node:fs";
 import cmdServe from "../src/commands/serve";
-import { DriaClient } from "./common";
+import { driaClient } from "./common";
 import cmdStop from "../src/commands/stop";
-import { checkDocker, checkNetwork } from "../src/common";
+import { checkDocker, checkNetwork, sleep } from "../src/common";
 
-describe("commands", () => {
-  const client = new DriaClient("http://localhost:8080");
-
+describe("fetch", () => {
   // a small knowledge zip on Arweave
   const txid = "3yUzQ8vnLeFUz_T2mhMoAQFZhJtQYG5o6FfeRRbLm-E";
-
   // the corresponding contract ID from the zip at that txID
   const contractId = "WbcY2a-KfDpk7fsgumUtLC2bu4NQcVzNlXWi13fPMlU";
+  // metadata type of this knowledge
+  type MetadataType = { id: string; page: string; text: string };
 
   beforeAll(async () => {
-    console.log(constants);
     await checkDocker();
     await checkNetwork();
 
@@ -26,21 +24,33 @@ describe("commands", () => {
 
   afterAll(async () => {
     await cmdClear(contractId);
+
+    await cmdStop();
   });
 
   it("should fetch", async () => {
     expect(existsSync(`${constants.DRIA.DATA}/${contractId}`)).toBe(false);
     await cmdFetch(txid);
+    await sleep(2000);
     expect(existsSync(`${constants.DRIA.DATA}/${contractId}`)).toBe(true);
   });
 
-  // it("should serve", async () => {
-  //   await cmdServe(contractId);
-  //   expect(await client.health()).toBe(true);
-  // });
+  it("should serve", async () => {
+    expect(await driaClient.health()).toBe(false);
+    await cmdServe(contractId);
+    await sleep(2000);
+    expect(await driaClient.health()).toBe(true);
 
-  // it("should stop", async () => {
-  //   await cmdStop();
-  //   expect(await client.health()).toBe(false);
-  // });
+    const fetched = await driaClient.fetchIds<MetadataType>([0]);
+    expect(fetched.length).toBe(1);
+    expect(typeof fetched[0].id).toBe("string");
+    expect(typeof fetched[0].page).toBe("string");
+    expect(typeof fetched[0].text).toBe("string");
+  });
+
+  it("should stop", async () => {
+    await cmdStop();
+    await sleep(2000);
+    expect(await driaClient.health()).toBe(false);
+  });
 });
