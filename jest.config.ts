@@ -13,8 +13,8 @@ const config: JestConfigWithTsJest = {
   openHandlesTimeout: 10_000,
   // print everything like Mocha
   verbose: true,
-  // dont run in parallel
-  maxConcurrency: 1,
+  // do this instead of forceExit
+  detectOpenHandles: true,
   // ignore output directory
   testPathIgnorePatterns: ["bin", "node_modules", "src"],
 };
