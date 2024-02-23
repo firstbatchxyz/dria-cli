@@ -7,7 +7,7 @@
     Dria CLI
   </h1>
   <p align="center">
-    <i>Dria CLI is a command-line tool that can be used to interact with Dria.</i>
+    <i>Dria CLI is a command-line tool that can be used to interact with Dria locally.</i>
   </p>
 </p>
 
@@ -155,3 +155,7 @@ You can lint & check formatting with:
 yarn lint
 yarn format
 ```
+
+## License
+
+See [LICENSE](./LICENSE).
