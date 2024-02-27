@@ -54,19 +54,30 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
     });
   });
 
-  await new Promise((resolve, reject) => {
-    createReadStream(tmpPath)
-      // unzips to out directory
-      .pipe(unzipper.Extract({ path: outDir, verbose: process.env.NODE_ENV !== "test" }))
-      .on("error", (err) => {
-        reject(err);
-      })
-      .on("close", () => {
-        logger.info("Knowledge extracted at", outDir);
-        logger.info("Cleaning up zip artifacts.");
-        rmSync(tmpPath);
-        logger.info("Done.");
-        resolve(true);
-      });
-  });
+  try {
+    await new Promise((resolve, reject) => {
+      createReadStream(tmpPath)
+        // unzips to out directory
+        .pipe(unzipper.Extract({ path: outDir, verbose: process.env.NODE_ENV !== "test" }))
+        .on("error", (err) => {
+          reject(err);
+        })
+        .on("close", () => {
+          logger.info("Knowledge extracted at", outDir);
+          logger.info("Cleaning up zip artifacts.");
+          rmSync(tmpPath);
+          logger.info("Done.");
+          resolve(true);
+        });
+    });
+  } catch (err) {
+    logger.error((err as Error).toString());
+
+    logger.info(`Something went wrong while extracting the downloaded zip file.
+You can instead try unzipping via:
+
+  unzip ~/.dria/tmp/${txId}.zip -d ~/.dria/data
+
+`);
+  }
 }
