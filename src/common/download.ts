@@ -1,17 +1,13 @@
 import Axios from "axios";
-import unzipper from "unzipper";
 import constants from "../constants";
 import { logger } from ".";
-import { createReadStream, createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
+import { createWriteStream, existsSync, mkdirSync } from "fs";
 
-/** Download a zipped data from Arweave, unzip & extract it at a given path.
- *
- * Uses streaming to write request to tmp disk, and then to target folder due to large size.
+/** Download a zipped data from Arweave and writes to dist with streams.
  *
  * @param txId txID on Arweave
- * @param outDir output directory for the extraction file
  */
-export async function downloadAndUnzip(txId: string, outDir: string) {
+export async function downloadZip(txId: string) {
   const url = `${constants.ARWEAVE.DOWNLOAD_URL}/${txId}`;
 
   logger.info("Downloading from", url);
@@ -20,8 +16,8 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
   if (!existsSync(constants.DRIA.TMP)) {
     mkdirSync(constants.DRIA.TMP, { recursive: true });
   }
-  const tmpPath = `${constants.DRIA.TMP}/${txId}.zip`;
-  const writer = createWriteStream(tmpPath);
+  const zipPath = `${constants.DRIA.TMP}/${txId}.zip`;
+  const writer = createWriteStream(zipPath);
   await Axios({
     url,
     method: "get",
@@ -36,7 +32,7 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
       }
     },
   }).then((response) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       response.data.pipe(writer);
 
       let error: Error | null = null;
@@ -48,36 +44,11 @@ export async function downloadAndUnzip(txId: string, outDir: string) {
       });
 
       writer.on("close", () => {
-        if (!error) resolve(true);
+        if (!error) resolve();
         // if error, we've rejected above
       });
     });
   });
 
-  try {
-    await new Promise((resolve, reject) => {
-      createReadStream(tmpPath)
-        // unzips to out directory
-        .pipe(unzipper.Extract({ path: outDir, verbose: process.env.NODE_ENV !== "test" }))
-        .on("error", (err) => {
-          reject(err);
-        })
-        .on("close", () => {
-          logger.info("Knowledge extracted at", outDir);
-          logger.info("Cleaning up zip artifacts.");
-          rmSync(tmpPath);
-          logger.info("Done.");
-          resolve(true);
-        });
-    });
-  } catch (err) {
-    logger.error((err as Error).toString());
-
-    logger.info(`Something went wrong while extracting the downloaded zip file.
-You can instead try unzipping via:
-
-  unzip ~/.dria/tmp/${txId}.zip -d ~/.dria/data
-
-`);
-  }
+  return zipPath;
 }

@@ -4,6 +4,7 @@ import constants from "../constants";
 
 export * from "./download";
 export * from "./image";
+export * from "./extract";
 export * from "./container";
 export * from "./network";
 

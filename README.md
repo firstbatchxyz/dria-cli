@@ -39,7 +39,8 @@ Commands:
   dria pull [contract]          Pull a knowledge to your local machine.
   dria serve [contract]         Serve a local knowledge.
   dria clear [contract]         Clear local knowledge.
-  dria fetch <txid>             Fetch an existing index at the given URL directly.
+  dria fetch <txid>             Fetch an existing index on Arweave.
+  dria extract <zip-path>       Extract a compressed knowledge.
   dria set-contract <contract>  Set default contract.
   dria config                   Show default configurations.
   dria list                     List all local knowledge.
@@ -92,6 +93,14 @@ dria fetch <txid>
 ```
 
 Note that the argument here is not the knowledge ID (i.e. the corresponding Arweave contract txID); instead, it is the transaction ID of the bundling transaction where the RocksDB folder was zipped & uploaded to Arweave.
+
+### Extract Knowledge
+
+The previously mentioned [fetch](#fetch-knowledge) command downloads a zip file from Arweave & extracts it. However, in some cases you might have the knowledge on another platform that is easier to access compared to downloading from Arweave, especially if internet connection is an issue. For such cases, we have the extract command which simply unzips the compressed knowledge under Dria's data directory.
+
+```sh
+dria extract <zip-path>
+```
 
 ### Configurations
 

@@ -102,7 +102,16 @@ export function driaCLI(args: string[]) {
 
     .command(
       "fetch <txid>",
-      "Fetch an existing index at the given URL directly.",
+      "Fetch an existing index on Arweave.",
+      (yargs) => yargs.positional(txIdArg.id, txIdArg.opts),
+      async (args) => {
+        await commands.fetch(args.txid!);
+      },
+    )
+
+    .command(
+      "extract <zip-path>",
+      "Extract a compressed knowledge.",
       (yargs) => yargs.positional(txIdArg.id, txIdArg.opts),
       async (args) => {
         await commands.fetch(args.txid!);

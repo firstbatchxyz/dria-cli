@@ -1,4 +1,4 @@
-import { downloadAndUnzip } from "../common";
+import { downloadZip, extractZip } from "../common";
 import constants from "../constants";
 
 /**
@@ -18,5 +18,7 @@ import constants from "../constants";
  * @param txId Arweave txID to download
  */
 export default async function cmdFetch(txId: string) {
-  await downloadAndUnzip(txId, constants.DRIA.DATA);
+  const outDir = constants.DRIA.DATA;
+  const zipPath = await downloadZip(txId);
+  await extractZip(zipPath, outDir);
 }
