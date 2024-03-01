@@ -1,42 +1,8 @@
 import yargs from "yargs";
-import commands from "./commands/";
-import { checkDocker, checkNetwork, logger } from "./common";
-import { getConfig, setConfig } from "./configurations";
-
-const config = getConfig();
-
-const contractIdArg = {
-  id: "contract" as const,
-  opts: {
-    alias: "c",
-    describe: "Contract ID",
-    type: "string",
-    default: config.contract,
-  } as const,
-} as const;
-
-const verboseArg = {
-  id: "verbose" as const,
-  opts: {
-    alias: "v",
-    describe: "Show extra information",
-    boolean: true,
-    default: false,
-    coerce: (verbose: boolean) => {
-      logger.setLevel(verbose ? "DEBUG" : "INFO");
-      return verbose;
-    },
-  } as const,
-} as const;
-
-const txIdArg = {
-  id: "txid" as const,
-  opts: {
-    describe: "Transaction ID",
-    type: "string",
-    demandOption: true,
-  } as const,
-} as const;
+import commands from "../commands/";
+import args from "./args";
+import { checkDocker, checkNetwork, logger } from "../common";
+import { getConfig, setConfig } from "../configurations";
 
 async function checkArgs(args: { contract?: string }, checks: { contract?: boolean; docker?: boolean }) {
   if (checks.contract) {
@@ -59,16 +25,16 @@ async function checkArgs(args: { contract?: string }, checks: { contract?: boole
  *
  * driaCLI(hideBin(process.argv));
  */
-export function driaCLI(args: string[]) {
-  yargs(args)
+export function driaCLI(cliArgs: string[]) {
+  yargs(cliArgs)
     .scriptName("dria")
-    .option(verboseArg.id, verboseArg.opts)
+    .option(args.verbose.id, args.verbose.opts)
 
     .command(
       "pull [contract]",
       "Pull a knowledge to your local machine.",
       (yargs) =>
-        yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
+        yargs.positional(args.contractId.id, args.contractId.opts).check(async (args) => {
           return await checkArgs(args, { contract: true, docker: true });
         }),
       async (args) => {
@@ -80,7 +46,7 @@ export function driaCLI(args: string[]) {
       "serve [contract]",
       "Serve a local knowledge.",
       (yargs) =>
-        yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
+        yargs.positional(args.contractId.id, args.contractId.opts).check(async (args) => {
           return await checkArgs(args, { contract: true, docker: true });
         }),
       async (args) => {
@@ -92,7 +58,7 @@ export function driaCLI(args: string[]) {
       "clear [contract]",
       "Clear local knowledge.",
       (yargs) =>
-        yargs.positional(contractIdArg.id, contractIdArg.opts).check(async (args) => {
+        yargs.positional(args.contractId.id, args.contractId.opts).check(async (args) => {
           return await checkArgs(args, { contract: true });
         }),
       async (args) => {
@@ -103,7 +69,7 @@ export function driaCLI(args: string[]) {
     .command(
       "fetch <txid>",
       "Fetch an existing index on Arweave.",
-      (yargs) => yargs.positional(txIdArg.id, txIdArg.opts),
+      (yargs) => yargs.positional(args.txId.id, args.txId.opts),
       async (args) => {
         await commands.fetch(args.txid!);
       },
@@ -112,16 +78,16 @@ export function driaCLI(args: string[]) {
     .command(
       "extract <zip-path>",
       "Extract a compressed knowledge.",
-      (yargs) => yargs.positional(txIdArg.id, txIdArg.opts),
+      (yargs) => yargs.positional(args.zipPath.id, args.zipPath.opts),
       async (args) => {
-        await commands.fetch(args.txid!);
+        await commands.extract(args.zipPath!);
       },
     )
 
     .command(
       "set-contract <contract>",
       "Set default contract.",
-      (yargs) => yargs.option(contractIdArg.id, { ...contractIdArg.opts, demandOption: true }),
+      (yargs) => yargs.option(args.contractId.id, { ...args.contractId.opts, demandOption: true }),
       (args) => {
         setConfig({
           contract: args.contract,
